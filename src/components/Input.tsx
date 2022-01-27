@@ -1,69 +1,78 @@
-import { useState, FC } from 'react';
+import moment from 'moment';
+import { FC, useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { Todo } from '../pages/index';
+interface InputType {
+  addTask: (todo: Todo) => void;
+}
 
-const Input: FC = () => {
-  type Drag = {
-    active: boolean;
-    x: string;
-    y: string;
+const Input = ({ addTask }: InputType) => {
+  const [deadline, setDeadline] = useState<string>(
+    moment().format('YYYY-MM-DD')
+  );
+  const [hours, setHours] = useState<string>(
+    moment().add(1, 'hours').format('HH:mm')
+  );
+  const [task, setTask] = useState<string>('');
+
+  const handleSubmit = (e: React.SyntheticEvent<EventTarget>) => {
+    e.preventDefault();
+
+    const todo = {
+      id: uuidv4(),
+      task,
+      date: new Date(`${deadline} ${hours}`),
+      done: false,
+    };
+
+    addTask(todo);
+    setTask('');
+    setDeadline(moment().format('YYYY-MM-DD'));
+    setHours(moment().add(1, 'hours').format('HH:mm'));
   };
 
-  const [drag, setDrag] = useState<Drag>({
-    active: false,
-    x: '',
-    y: '',
-  });
-
-  const [dims, setDims] = useState({
-    w: 200,
-    h: 200,
-  });
-
-  const boxStyle = {
-    width: `${dims.w}px`,
-    height: `${dims.h}px`,
-  };
-
-  const startResize = (e: any): void => {
-    setDrag({
-      active: true,
-      x: e.clientX,
-      y: e.clientY,
-    });
-  };
-
-  const resizeFrame = (e: any): void => {
-    const { active, x, y } = drag;
-    if (active) {
-      const xDiff = Math.abs(Number(x) - e.clientX);
-      const yDiff = Math.abs(Number(y) - e.clientY);
-      const newW = x > e.clientX ? dims.w - xDiff : dims.w + xDiff;
-      const newH = y > e.clientY ? dims.h + yDiff : dims.h - yDiff;
-
-      setDrag({ ...drag, x: e.clientX, y: e.clientY });
-      setDims({ w: newW, h: newH });
-    }
-    console.log(e.clientX, e.clientY);
-  };
-
-  const stopResize = (e: Event) => {
-    setDrag({ ...drag, active: false });
-  };
-
+  useEffect(() => {
+    ((): void => {
+      if (moment(`${deadline} ${hours}`).isBefore()) {
+        setDeadline(moment().format('YYYY-MM-DD'));
+      }
+      if (moment(hours, 'h:mma').isBefore()) {
+        setDeadline(moment().add(1, 'day').format('YYYY-MM-DD'));
+      }
+    })();
+  }, [hours, deadline]);
   return (
-    <div
-      className='flex h-[100vh] justify-center items-center'
-      onMouseMove={resizeFrame}
-      onMouseUp={stopResize}
+    <form
+      className='max-w-2xl flex flex-col items-center '
+      onSubmit={handleSubmit}
     >
-      <div className='bg-red'>
-        <button
-          onMouseDown={startResize}
-          className='bg-white cursor-pointer border-black float-right m-0'
-        >
-          Size Me
-        </button>
-      </div>
-    </div>
+      <input
+        type='text'
+        placeholder='Task Title'
+        className='input w-96'
+        name='query'
+        value={task}
+        onChange={(e) => setTask(e.target.value)}
+      />
+      <label htmlFor='date' className='bg-teal text-white '>
+        what is your deadline?
+      </label>
+      <input
+        type='date'
+        className='input w-96'
+        name='deadline'
+        value={deadline}
+        onChange={(e) => setDeadline(e.target.value)}
+      />
+      <input
+        type='time'
+        className='input w-96'
+        name='time'
+        value={hours}
+        onChange={(e) => setHours(e.target.value)}
+      />
+      <button className='button my-4'>Add Task</button>
+    </form>
   );
 };
 

@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react';
-import Todo from '../pages/index';
+
 import moment from 'moment';
 import 'quill/dist/quill.snow.css';
 import { useQuill } from 'react-quilljs';
@@ -65,7 +65,11 @@ const Window: FC = ({ id, task, date, done }: any) => {
           questions and their answers may thus be called an FAQ regardless of whether the
            questions are actually frequently asked. <br/><br/> While the name may be recent,
             the FAQ format itself is quite old. For example, <a href="/wiki/Matthew_Hopkins" title="Matthew Hopkins">Matthew Hopkins</a> wrote <i>The Discovery of Witches</i> in 1647 as a list of questions and answers, introduced as "Certain Queries answered". Many old <a href="/wiki/Catechism" 
-         title="Catechism">catechisms</a> are in a question-and-answer (Q&amp;A) format. `
+         title="Catechism">catechisms</a> are in a question-and-answer (Q&amp;A) format.  
+          <img
+    src='https://images-na.ssl-images-amazon.com/images/I/41LRmG9xp6L.jpg'
+    alt='todo'
+  />`
         );
       }
     }
@@ -95,9 +99,9 @@ const Window: FC = ({ id, task, date, done }: any) => {
       </div>
 
       {true && (
-        <main className='bg-gray-300 border-t-0 w-full h-96'>
+        <main className='bg-gray-300 border-t-0 w-[100%] h-[100%]'>
           <article className='text-gray-700 text-center'>
-            <div className='w-[100%] h-[100%] mx-auto border-0 outline-none bg-gray-300 '>
+            <div className=' mx-auto border-0 outline-none'>
               <div ref={quillRef} className='text-2xl' />
             </div>
           </article>
